@@ -3,9 +3,9 @@ import React from 'react'
 import { RiAddLargeFill } from "react-icons/ri";
 import { cardStyle } from './cardStyle';
 
-const AddCard = () => {
+const AddCard = ({ onClick }) => {
   return (
-    <Card sx={cardStyle.addCard}>
+    <Card onClick={onClick} sx={cardStyle.addCard}>
       <CardContent>
         <Box
           sx={{

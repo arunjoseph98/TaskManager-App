@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -21,9 +21,20 @@ import { navBarStyles } from './navStyles';
 import logo from '../../assets/taskboard logo.png'
 import { Button, IconButton } from '@mui/material';
 import { FiLogOut } from "react-icons/fi";
+import AddNewBoard from '../modal/AddNewBoard';
 
 
 const Navbar = () => {
+  const [isBoards,setIsBoards]= useState(true)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+    const handleOpenModal = () => setIsModalOpen(true);
+    const handleCloseModal = () => setIsModalOpen(false);
+  
+    const handleCreateBoard = (boardData) => {
+      console.log('Board Created:', boardData);
+      // You can add logic to save the board data
+    };
 
 
   return (
@@ -51,7 +62,7 @@ const Navbar = () => {
         <List>
           {taskboardNavbarItems.map((item, index) => (
             <ListItem key={item.id} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={handleOpenModal}>
                 <ListItemIcon sx={navBarStyles.icons}>
                   <item.icon size={25} />
                 </ListItemIcon>
@@ -61,6 +72,12 @@ const Navbar = () => {
           ))}
         </List>
       </Drawer>
+
+      {
+        <AddNewBoard open={isModalOpen}
+        handleClose={handleCloseModal}
+        handleCreate={handleCreateBoard} />
+        }
     </>
   )
 }
