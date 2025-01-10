@@ -2,7 +2,7 @@ import React from 'react'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 
-const BasicMenu = ({ anchorEl, handleClose, open, menuItems }) => {
+const BasicMenu = ({ anchorEl, handleClose, open,handleOpenDeleteModal,handleOpenAddModal }) => {
     return (
       <Menu
         id="basic-menu"
@@ -10,13 +10,8 @@ const BasicMenu = ({ anchorEl, handleClose, open, menuItems }) => {
         open={open}
         onClose={handleClose}
       >
-        {menuItems.map((item) => (
-          <MenuItem
-            onClick={handleClose}
-          >
-            {item.label}
-          </MenuItem>
-        ))}
+        <MenuItem onClick={handleOpenAddModal}>Edit</MenuItem>
+        <MenuItem onClick={handleOpenDeleteModal}>Delete</MenuItem>
       </Menu>
  
     )

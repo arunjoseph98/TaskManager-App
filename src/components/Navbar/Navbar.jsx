@@ -19,10 +19,12 @@ import logo from '../../assets/taskboard logo.png'
 import { Button, IconButton } from '@mui/material';
 import { FiLogOut } from "react-icons/fi";
 import AddNewBoard from '../modal/AddNewBoard';
+import { Router, useLocation, useNavigate } from 'react-router-dom';
 
 
 const Navbar = ({navOpt}) => {
-  const [isBoards,setIsBoards]= useState(true)
+  const location = useLocation(); // Hook to get current location
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   
     const handleOpenModal = () => setIsModalOpen(true);
@@ -44,6 +46,19 @@ const Navbar = ({navOpt}) => {
       }
     };
 
+    let navigate = useNavigate();
+
+    const handleClick=(fn,route)=>{
+      switch (fn) {
+        case 'createBord':
+          return handleOpenModal();
+        case 'goTo':
+          return navigate(route);
+        default:
+          return [];
+      }
+    }
+
 
   return (
     <>
@@ -53,7 +68,7 @@ const Navbar = ({navOpt}) => {
           <Box sx={navBarStyles.wrapper}>
           <img src={logo} style={navBarStyles.logo} alt="" />
             <Box sx={navBarStyles.topRow}>
-              <IconButton color="white">
+              <IconButton onClick={()=>navigate('/')} color="white">
                 <FiLogOut />
               </IconButton>
             </Box>
@@ -67,12 +82,13 @@ const Navbar = ({navOpt}) => {
       >
         <Toolbar />
         <Divider />
+        <Toolbar />
         <List>
   {getItemsForNav(navOpt).map((item) => (
     <ListItem key={item.id} disablePadding>
-      <ListItemButton onClick={() => handleNavigation(item.path)}>
+      <ListItemButton onClick={() => handleClick(item.functionName,item.route)} selected={location.pathname==item.route?true:false}>
         <ListItemIcon sx={navBarStyles.icons}>
-          <item.icon size={25} />
+          <item.icon size={28} />
         </ListItemIcon>
         <ListItemText primary={item.label} />
       </ListItemButton>

@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
 
-const AddNewBoard = ({ open, handleClose, handleCreate }) => {
+const AddNewBoard = ({ open, handleClose, handleCreate,isEdit }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
 
@@ -70,6 +70,14 @@ const AddNewBoard = ({ open, handleClose, handleCreate }) => {
                     <Button onClick={boxClose} color="secondary">
                         Cancel
                     </Button>
+                    {isEdit ? <Button
+                        onClick={handleSubmit}
+                        color="primary"
+                        variant="contained"
+                    >
+                        OK
+                    </Button>
+                    :
                     <Button
                         onClick={handleSubmit}
                         color="primary"
@@ -77,7 +85,7 @@ const AddNewBoard = ({ open, handleClose, handleCreate }) => {
                         disabled={!title.trim()} // Disable button if title is empty
                     >
                         Create
-                    </Button>
+                    </Button>}
                 </DialogActions>
             </Dialog>
 

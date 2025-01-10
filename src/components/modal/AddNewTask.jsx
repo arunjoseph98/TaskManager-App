@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material';
 
-const AddNewTask = ({ open, handleClose, handleCreate }) => {
+const AddNewTask = ({ open, handleClose, handleCreate,isEdit }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [priority, setPriority] = useState('Medium');
@@ -127,6 +127,14 @@ const AddNewTask = ({ open, handleClose, handleCreate }) => {
                     <Button onClick={boxClose} color="secondary">
                         Cancel
                     </Button>
+                    {isEdit ? <Button
+                        onClick={handleSubmit}
+                        color="primary"
+                        variant="contained"
+                    >
+                        OK
+                    </Button>
+                    :
                     <Button
                         onClick={handleSubmit}
                         color="primary"
@@ -134,7 +142,7 @@ const AddNewTask = ({ open, handleClose, handleCreate }) => {
                         disabled={!title.trim()} // Disable button if title is empty
                     >
                         Create
-                    </Button>
+                    </Button>}
                 </DialogActions>
             </Dialog>
 

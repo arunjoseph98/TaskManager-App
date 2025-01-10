@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import Grid from '@mui/material/Grid2';
-import BasicMenu from '../common/BasicMenu/BasicMenu';
 import BoardCard from '../Card/BoardCard';
 import AddCard from '../Card/AddCard';
 import AddNewBoard from '../modal/AddNewBoard';
@@ -28,22 +27,20 @@ const View = () => {
         <Grid xs={12} sm={6} md={4}> 
           <BoardCard />
         </Grid>
+
         <Grid xs={12} sm={6} md={4}> 
         <BoardCard />
         </Grid>
+
         <Grid xs={12} sm={6} md={4}> 
         <BoardCard />
         </Grid>
+
         <Grid xs={12} sm={6} md={4}>
           <AddCard onClick={handleOpenModal} />
         </Grid>
       </Grid>
-
-      {/* <DeleteConfirmation open={isModalOpen}
-        handleClose={handleCloseModal}
-        handleCreate={handleCreateBoard} /> */}
-
-      
+   
 
       <AddNewBoard open={isModalOpen}
         handleClose={handleCloseModal}
