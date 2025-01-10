@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import { cardStyle } from './cardStyle';
 
 import { PiDotsThreeOutlineVertical } from "react-icons/pi";
+import { Chip } from '@mui/material';
 
 const TaskCard = () => {
   return (
@@ -43,8 +44,11 @@ const TaskCard = () => {
         }}
       >
         <Typography variant="caption" color="text.secondary">
-        Due <br />dd-mm-yyyy
+          Due <br />dd-mm-yyyy
         </Typography>
+
+        <Chip label="Medium" color="warning" size="small"/>
+
         <Checkbox color="primary" />
       </CardActions>
     </Card>
