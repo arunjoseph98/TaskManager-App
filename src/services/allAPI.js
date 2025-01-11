@@ -19,6 +19,11 @@ export const getTaskBoardAPI = async () => {
     return await commonAPI(`GET`,`${SERVERURL}/taskBoards`,"")
 }
 
+// get task board name
+export const getTaskBoardTitleAPI = async (id) => {
+    return await commonAPI(`GET`,`${SERVERURL}/taskBoards/${id}`,"")
+}
+
 //getAllTask
 export const getAllTaskAPI = async (id) => {
     return await commonAPI(`GET`,`${SERVERURL}/tasks?boardId=${id}`,"")
@@ -30,7 +35,15 @@ export const editBoardAPI= async (boardDetails) =>{
     return await commonAPI('PUT',`${SERVERURL}/taskBoards/${boardDetails.id}`,boardDetails)
 }
 
-Axios 
+//edit task 
+export const editTaskAPI= async (TaskDetails) =>{
+    return await commonAPI('PUT',`${SERVERURL}/tasks/${TaskDetails.id}`,TaskDetails)
+}
+
+//edit task 
+export const updateStatusAPI= async (id,Status) =>{
+    return await commonAPI('PATCH',`${SERVERURL}/tasks/${id}`,Status)
+}
 
 //DELETE
 //delete task board

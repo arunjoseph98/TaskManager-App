@@ -15,7 +15,7 @@ const View = ({resBoard,setResBoard}) => {
     getTaskBoard()
   }, [resBoard])
 
-  console.log(allBoards);
+  // console.log(allBoards);
   //getTaskBoardAPI
   const getTaskBoard = async () => {
     try {

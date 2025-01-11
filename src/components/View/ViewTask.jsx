@@ -6,11 +6,12 @@ import AddNewTask from '../modal/AddNewTask';
 import { Box, Button, ButtonGroup, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
-import { getAllTaskAPI } from '../../services/allAPI';
+import { getAllTaskAPI, getTaskBoardTitleAPI } from '../../services/allAPI';
 
 const ViewTask = ({ resTask, setResTask }) => {
     const param = useParams()
     const [allTask, setAllTask] = useState([])
+    const [board,setBoard]=useState({})
 
     useEffect(() => {
         getAllTask(param.id)
@@ -26,10 +27,12 @@ const ViewTask = ({ resTask, setResTask }) => {
     const getAllTask = async (id) => {
         try {
             const result = await getAllTaskAPI(id);
+            const boardResult = await getTaskBoardTitleAPI(id)
 
             if (result.status >= 200 && result.status < 300) {
                 setAllTask(result.data);
-                // console.log(result.data);
+                setBoard(boardResult.data)
+                // console.log(boardResult.data);
             }
             else {
                 console.log("API call failed");
@@ -43,7 +46,7 @@ const ViewTask = ({ resTask, setResTask }) => {
         <>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography gutterBottom variant="h4" component="div">
-                    Board Title
+                    {board?.title}
                 </Typography>
                 <Box >
                     <Button variant="text">All</Button>

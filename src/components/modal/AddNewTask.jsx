@@ -14,7 +14,7 @@ import dayjs from 'dayjs';
 const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit}) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [isComplete,setIsComplete]=useState(false)
+    const [isComplete,setIsComplete]=useState(false);
     const [priority, setPriority] = useState('Medium');
     const [dueDate, setDueDate] = useState(null);
     const [date, setDate] = useState(null);
@@ -28,18 +28,20 @@ const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit})
         dueDate: null,
         date: null,
     })
-    console.log('isEdit :',isEdit);
+    // console.log('isEdit :',isEdit);
     
     useEffect(() => {
         if (isEdit) {
             setTitle(taskData.title)
             setDescription(taskData.description)
-            setIsComplete(taskData.setIsComplete)
+            setIsComplete(taskData.isComplete)
             setPriority(taskData.priority);
             setDueDate(taskData.dueDate);
             setDate(dayjs(taskData.date));
+            // console.log(isComplete);
+            
         }
-    }, [])
+    }, [taskData])
 
 
     const dateFormat = (newValue) => {
@@ -138,7 +140,7 @@ const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit})
                     px: 2,
                 }}
             >
-                <DialogTitle>Create New Task</DialogTitle>
+                <DialogTitle>{isEdit ? 'Edit Task' : 'Create New Task'}</DialogTitle>
                 <DialogContent>
                     <Box
                         component="form"

@@ -15,9 +15,9 @@ import { Chip } from '@mui/material';
 import BasicMenu from '../common/BasicMenu/BasicMenu';
 import DeleteConfirmation from '../modal/DeleteConfirmation';
 import AddNewTask from '../modal/AddNewTask';
-import { deleteTaskAPI } from '../../services/allAPI';
+import { deleteTaskAPI, updateStatusAPI } from '../../services/allAPI';
 
-const TaskCard = ({taskData,setResTask,boardId}) => {
+const TaskCard = ({ taskData, setResTask, boardId }) => {
   //menu
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
@@ -55,20 +55,46 @@ const TaskCard = ({taskData,setResTask,boardId}) => {
   }
   const handleCloseAddModal = () => setIsAddModalOpen(false);
 
-  
+
 
   const deleteTask = async (id) => {
-      try{
-       const result = await deleteTaskAPI(id)
-       setResTask(result)
-      }
-      catch(err)
-      {
-        console.log(err);
-        
-      }
-    } 
-  
+    try {
+      const result = await deleteTaskAPI(id)
+      setResTask(result)
+    }
+    catch (err) {
+      console.log(err);
+
+    }
+  }
+
+  const [checked, setChecked] = useState(taskData.isComplete); //checkBox
+
+  const handleCheckboxChange = (event) => {
+    setChecked(event.target.checked);  // Update the state based on the checkbox status
+    if (event.target.checked) {
+      updateStatus(taskData.id,true);
+    } else {
+      updateStatus(taskData.id,false);
+    }
+  };
+
+  const updateStatus = async (id, status) => {
+    try {
+      const updatedData = {
+        isComplete: status,
+      };
+      const result = await updateStatusAPI(id, updatedData)
+      //  setResTask(result)
+      console.log(result);
+
+    }
+    catch (err) {
+      console.log(err);
+
+    }
+  }
+
 
 
   return (
@@ -78,7 +104,7 @@ const TaskCard = ({taskData,setResTask,boardId}) => {
         <CardHeader
           title={
             <Typography variant="h6" component="div">
-               {taskData?.title}
+              {taskData?.title}
             </Typography>
           }
           action={
@@ -109,7 +135,11 @@ const TaskCard = ({taskData,setResTask,boardId}) => {
 
           <Chip label={taskData?.priority} color="warning" size="small" />
 
-          <Checkbox color="primary" />
+          <Checkbox
+            checked={checked}
+            onChange={handleCheckboxChange}
+            color="primary"
+          />
         </CardActions>
         <BasicMenu anchorEl={anchorEl}
           open={openMenu}
@@ -127,7 +157,7 @@ const TaskCard = ({taskData,setResTask,boardId}) => {
         taskData={taskData}
         setResTask={setResTask}
         boardId={boardId}
-        isEdit={true}  />
+        isEdit={true} />
 
     </>
   );

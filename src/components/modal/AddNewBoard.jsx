@@ -14,8 +14,9 @@ const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit }) => {
         if (isEdit) {
             setTitle(boardData.title)
             setDescription(boardData.description)
+            
         }
-    }, [])
+    }, [boardData])
 
     const [boardDetails, setBoardDetails] = useState({
         title: "",
@@ -25,18 +26,18 @@ const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit }) => {
     const handleSubmit = () => {
         const updatedBoardDetails = {
             ...boardDetails,
-            id: isEdit ? boardData.id : undefined, 
+            id: isEdit ? boardData.id : undefined,
             title,
             description,
         };
-    
+
         // Update state
         setBoardDetails(updatedBoardDetails);
-    
+
         // Reset input fields
         setTitle('');
         setDescription('');
-    
+
         // Call the appropriate handler
         if (isEdit) {
             handleUpdateBoard(updatedBoardDetails);
@@ -46,10 +47,10 @@ const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit }) => {
 
     };
 
-    const handleCreateBoard = async (updatedBoardDetails) => {
+    const handleCreateBoard = async (boardDetails) => {
         try {
 
-            const result = await addTaskBoardAPI(updatedBoardDetails);
+            const result = await addTaskBoardAPI(boardDetails);
             if (result.status >= 200 && result.status < 300) {
                 setResBoard(result)
             }
@@ -61,10 +62,10 @@ const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit }) => {
         }
     };
 
-    const handleUpdateBoard = async (updatedBoardDetails) => {
+    const handleUpdateBoard = async (boardDetails) => {
         try {
             console.log('Updating board');
-            const result = await editBoardAPI(updatedBoardDetails);
+            const result = await editBoardAPI(boardDetails);
             console.log(result);
             if (result.status >= 200 && result.status < 300) {
                 setResBoard(result)
