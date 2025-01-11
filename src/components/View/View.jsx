@@ -64,7 +64,8 @@ const View = ({resBoard,setResBoard}) => {
 
       <AddNewBoard open={isModalOpen}
         handleClose={handleCloseModal}
-        setResBoard={setResBoard} />
+        setResBoard={setResBoard} 
+        isEdit={false}/>
     </>
   )
 }

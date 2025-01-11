@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -6,36 +6,85 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material';
 
-const AddNewTask = ({ open, handleClose, handleCreate,isEdit }) => {
+import { addTaskAPI, editTaskAPI } from '../../services/allAPI'
+import dayjs from 'dayjs';
+
+const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit}) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [isComplete,setIsComplete]=useState(false)
     const [priority, setPriority] = useState('Medium');
     const [dueDate, setDueDate] = useState(null);
-    const [date,setDate] = useState(null);
+    const [date, setDate] = useState(null);
 
+    const [taskDetails, setTaskDetails] = useState({
+        title: "",
+        boardId: '',
+        description: "",
+        isComplete:false,
+        priority: "",
+        dueDate: null,
+        date: null,
+    })
+    console.log('isEdit :',isEdit);
     
+    useEffect(() => {
+        if (isEdit) {
+            setTitle(taskData.title)
+            setDescription(taskData.description)
+            setIsComplete(taskData.setIsComplete)
+            setPriority(taskData.priority);
+            setDueDate(taskData.dueDate);
+            setDate(dayjs(taskData.date));
+        }
+    }, [])
+
+
     const dateFormat = (newValue) => {
         if (newValue) {
-          const date = {
-            day: newValue.date(),
-            month: newValue.month() + 1,
-            year: newValue.year(),
-          };
-          setDate(newValue)
-          setDueDate(date);
+            const date = {
+                day: newValue.date(),
+                month: newValue.month() + 1,
+                year: newValue.year(),
+            };
+            setDate(newValue)
+            setDueDate(date);
+            
         }
-    
-      };
+
+    };
 
     const handleSubmit = () => {
-        handleCreate({ title, description, priority, dueDate });
+        
+        
+        const updatedTaskDetails = {
+            ...taskDetails,
+            id: isEdit ? taskData.id : undefined,
+            boardId,
+            title,
+            description,
+            isComplete,
+            priority,
+            dueDate,
+            date,
+        };
+        
+        // Update state
+        setTaskDetails(updatedTaskDetails);
+
         setTitle('');
         setDescription('');
         setPriority('Medium');
         setDueDate(null);
-        handleClose();
+        setDate(null);
+
+        if (isEdit) {
+            handleUpdateTask(updatedTaskDetails);
+        } else {
+            handleCreateTask(updatedTaskDetails);
+        }
     };
 
     const boxClose = () => {
@@ -45,6 +94,37 @@ const AddNewTask = ({ open, handleClose, handleCreate,isEdit }) => {
         setDueDate(null);
         handleClose();
     };
+
+    const handleCreateTask = async (TaskDetails) => {
+        try {
+            console.log(TaskDetails);
+            const result = await addTaskAPI(TaskDetails);
+            if (result.status >= 200 && result.status < 300) {
+                setResTask(result)
+            }
+
+        } catch (error) {
+            console.error('Error creating task:', error);
+        } finally {
+            handleClose();
+        }
+    }
+
+    const handleUpdateTask = async (TaskDetails) => {
+        try {
+            console.log('Updating task');
+            const result = await editTaskAPI(TaskDetails);
+            console.log(result);
+            if (result.status >= 200 && result.status < 300) {
+                setResTask(result)
+            }
+        } catch (error) {
+            console.error('Error updating task:', error);
+        } finally {
+            handleClose();
+        }
+    };
+
 
     return (
         <>
@@ -89,13 +169,13 @@ const AddNewTask = ({ open, handleClose, handleCreate,isEdit }) => {
                             onChange={(e) => setDescription(e.target.value)}
                         />
 
-                        <Box 
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            gap: 2,
-                            mt: 1,
-                        }}>
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                gap: 2,
+                                mt: 1,
+                            }}>
                             {/* Priority Dropdown */}
                             <TextField
                                 label="Priority"
@@ -109,7 +189,7 @@ const AddNewTask = ({ open, handleClose, handleCreate,isEdit }) => {
                                 <MenuItem value="Medium">Medium</MenuItem>
                                 <MenuItem value="Low">Low</MenuItem>
                             </TextField>
-    
+
                             {/* Due Date Picker */}
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker
@@ -134,15 +214,15 @@ const AddNewTask = ({ open, handleClose, handleCreate,isEdit }) => {
                     >
                         OK
                     </Button>
-                    :
-                    <Button
-                        onClick={handleSubmit}
-                        color="primary"
-                        variant="contained"
-                        disabled={!title.trim()} // Disable button if title is empty
-                    >
-                        Create
-                    </Button>}
+                        :
+                        <Button
+                            onClick={handleSubmit}
+                            color="primary"
+                            variant="contained"
+                            disabled={!title.trim()} // Disable button if title is empty
+                        >
+                            Create
+                        </Button>}
                 </DialogActions>
             </Dialog>
 

@@ -76,7 +76,7 @@ const BoardCard = ({boardData,setResBoard}) => {
 
   return (
     <>
-      <Card sx={cardStyle.card} onClick={() => { navigate("/:id/AllTasks"); }}>
+      <Card sx={cardStyle.card} onClick={() => { navigate(`/${boardData.id}/AllTasks`); }}>
 
         <CardHeader
           title={

@@ -7,7 +7,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@m
 import { addTaskBoardAPI, editBoardAPI } from '../../services/allAPI'
 
 
-const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit = false }) => {
+const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     useEffect(() => {
@@ -20,37 +20,28 @@ const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit = false
     const [boardDetails, setBoardDetails] = useState({
         title: "",
         description: "",
-        tasks: []
     })
 
     const handleSubmit = () => {
+        const updatedBoardDetails = {
+            ...boardDetails,
+            id: isEdit ? boardData.id : undefined, 
+            title,
+            description,
+        };
+    
+        // Update state
+        setBoardDetails(updatedBoardDetails);
+    
+        // Reset input fields
+        setTitle('');
+        setDescription('');
+    
+        // Call the appropriate handler
         if (isEdit) {
-            const updatedBoardDetails = {
-                ...boardDetails,
-                title,
-                description,
-                id:boardData.id
-            };
-            // Update state
-            setBoardDetails(updatedBoardDetails);
-
-            setTitle('');
-            setDescription('');
-
-            handleUpdateBoard(updatedBoardDetails)
-        }
-        else {
-            const updatedBoardDetails = {
-                ...boardDetails,
-                title,
-                description,
-            };
-            // Update state
-            setBoardDetails(updatedBoardDetails);
-
-            setTitle('');
-            setDescription('');
-            handleCreateBoard(updatedBoardDetails)
+            handleUpdateBoard(updatedBoardDetails);
+        } else {
+            handleCreateBoard(updatedBoardDetails);
         }
 
     };

@@ -2,6 +2,8 @@ export const cardStyle = {
     card: {
         width: 300,
         height:250,
+        display: 'flex',
+        flexDirection: 'column',
         backgroundColor: '#f5f5f5',
         cursor: 'pointer',
         transition: 'transform 0.2s ease-in-out',

@@ -15,8 +15,9 @@ import { Chip } from '@mui/material';
 import BasicMenu from '../common/BasicMenu/BasicMenu';
 import DeleteConfirmation from '../modal/DeleteConfirmation';
 import AddNewTask from '../modal/AddNewTask';
+import { deleteTaskAPI } from '../../services/allAPI';
 
-const TaskCard = () => {
+const TaskCard = ({taskData,setResTask,boardId}) => {
   //menu
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
@@ -38,9 +39,10 @@ const TaskCard = () => {
 
   const handleCloseDeleteModal = () => setIsDeleteModalOpen(false);
 
-  const handleDelete = (boardData) => {
-    console.log('Board Created:', boardData);
-    // You can add logic to save the board data
+  const handleDelete = () => {
+    console.log('deletetask:');
+    deleteTask(taskData.id)
+    handleCloseDeleteModal()
   };
 
   //AddModal -task
@@ -53,10 +55,20 @@ const TaskCard = () => {
   }
   const handleCloseAddModal = () => setIsAddModalOpen(false);
 
-  const handleCreateTask = (boardData) => {
-    console.log('Board Created:', boardData);
-    // You can add logic to save the board data
-  };
+  
+
+  const deleteTask = async (id) => {
+      try{
+       const result = await deleteTaskAPI(id)
+       setResTask(result)
+      }
+      catch(err)
+      {
+        console.log(err);
+        
+      }
+    } 
+  
 
 
   return (
@@ -66,7 +78,7 @@ const TaskCard = () => {
         <CardHeader
           title={
             <Typography variant="h6" component="div">
-              Card Title
+               {taskData?.title}
             </Typography>
           }
           action={
@@ -79,7 +91,7 @@ const TaskCard = () => {
         {/* Card Content */}
         <CardContent>
           <Typography variant="body2" color="text.secondary">
-            This is some additional information or description for the card. It could be detailed content about the task or item represented by the card.
+            {taskData?.description}
           </Typography>
         </CardContent>
 
@@ -87,14 +99,15 @@ const TaskCard = () => {
         <CardActions
           sx={{
             justifyContent: 'space-between',
-            padding: '8px 16px',
+            padding: '15px 16px',
+            marginTop: 'auto'
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            Due <br />dd-mm-yyyy
+            Due <br />{taskData?.dueDate?.day}-{taskData?.dueDate?.month}-{taskData?.dueDate?.year}
           </Typography>
 
-          <Chip label="Medium" color="warning" size="small" />
+          <Chip label={taskData?.priority} color="warning" size="small" />
 
           <Checkbox color="primary" />
         </CardActions>
@@ -107,11 +120,13 @@ const TaskCard = () => {
 
       <DeleteConfirmation open={isDeleteModalOpen}
         handleClose={handleCloseDeleteModal}
-        handleCreate={handleDelete} />
+        handleDelete={handleDelete} />
 
       <AddNewTask open={isAddModalOpen}
         handleClose={handleCloseAddModal}
-        handleCreate={handleCreateTask}
+        taskData={taskData}
+        setResTask={setResTask}
+        boardId={boardId}
         isEdit={true}  />
 
     </>
