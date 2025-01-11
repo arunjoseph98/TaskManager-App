@@ -1,21 +1,44 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Grid from '@mui/material/Grid2';
 import BoardCard from '../Card/BoardCard';
 import AddCard from '../Card/AddCard';
 import AddNewBoard from '../modal/AddNewBoard';
-import DeleteConfirmation from '../modal/DeleteConfirmation';
+import { getTaskBoardAPI } from "../../services/allAPI"
+
+const View = ({resBoard,setResBoard}) => {
+
+  const [allBoards, setAllBoards] = useState([])
+
+  
+
+  useEffect(() => {
+    getTaskBoard()
+  }, [resBoard])
+
+  console.log(allBoards);
+  //getTaskBoardAPI
+  const getTaskBoard = async () => {
+    try {
+      const result = await getTaskBoardAPI();
+      // console.log(result);
+      if (result.status >= 200 && result.status < 300) {
+        setAllBoards(result.data);
+      }
+      else {
+        console.log("API call failed");
+      }
+    } catch (error) {
+      console.error('Error creating board:', error);
+    }
+  };
 
 
-const View = () => {
+
+  //AddNewBoard Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleCreateBoard = (boardData) => {
-    console.log('Board Created:', boardData);
-    // You can add logic to save the board data
-  };
   return (
     <>
       <Grid
@@ -24,27 +47,24 @@ const View = () => {
         justifyContent="flex-start" // Align items horizontally
         alignItems="flex-start"     // Align items vertically
       >
-        <Grid xs={12} sm={6} md={4}> 
-          <BoardCard />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={4}> 
-        <BoardCard />
-        </Grid>
-
-        <Grid xs={12} sm={6} md={4}> 
-        <BoardCard />
-        </Grid>
+        {
+          allBoards?.length > 0 &&
+          allBoards?.map(board=>(
+            <Grid key={board.id} xs={12} sm={6} md={4}>
+            <BoardCard setResBoard={setResBoard} boardData={board} />
+          </Grid>
+          ))
+        }
 
         <Grid xs={12} sm={6} md={4}>
           <AddCard onClick={handleOpenModal} />
         </Grid>
       </Grid>
-   
+
 
       <AddNewBoard open={isModalOpen}
         handleClose={handleCloseModal}
-        handleCreate={handleCreateBoard} />
+        setResBoard={setResBoard} />
     </>
   )
 }

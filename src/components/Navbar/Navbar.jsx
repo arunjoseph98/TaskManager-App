@@ -22,7 +22,7 @@ import AddNewBoard from '../modal/AddNewBoard';
 import { Router, useLocation, useNavigate } from 'react-router-dom';
 
 
-const Navbar = ({navOpt}) => {
+const Navbar = ({navOpt,setResBoard}) => {
   const location = useLocation(); // Hook to get current location
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,11 +30,7 @@ const Navbar = ({navOpt}) => {
     const handleOpenModal = () => setIsModalOpen(true);
     const handleCloseModal = () => setIsModalOpen(false);
   
-    const handleCreateBoard = (boardData) => {
-      console.log('Board Created:', boardData);
-      // You can add logic to save the board data
-    };
-
+   
     const getItemsForNav = (navOpt) => {
       switch (navOpt) {
         case 'board':
@@ -100,7 +96,7 @@ const Navbar = ({navOpt}) => {
       {
         <AddNewBoard open={isModalOpen}
         handleClose={handleCloseModal}
-        handleCreate={handleCreateBoard} />
+        setResBoard={setResBoard} />
         }
     </>
   )

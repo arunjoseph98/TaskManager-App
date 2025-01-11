@@ -5,7 +5,6 @@ import TaskBoards from './pages/TaskBoards'
 import AllTasks from './pages/AllTasks'
 import CompletedTasks from './pages/CompletedTasks'
 import OverdueTasks from './pages/OverdueTasks'
-import Board from './components/View/View'
 import { ThemeProvider } from '@mui/material'
 import { dashboardTheme } from './dashboardTheme'
 function App() {

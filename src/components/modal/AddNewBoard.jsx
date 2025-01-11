@@ -4,16 +4,85 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
+import { addTaskBoardAPI, editBoardAPI } from '../../services/allAPI'
 
-const AddNewBoard = ({ open, handleClose, handleCreate,isEdit }) => {
+
+const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit = false }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    useEffect(() => {
+        if (isEdit) {
+            setTitle(boardData.title)
+            setDescription(boardData.description)
+        }
+    }, [])
+
+    const [boardDetails, setBoardDetails] = useState({
+        title: "",
+        description: "",
+        tasks: []
+    })
 
     const handleSubmit = () => {
-        handleCreate({ title, description });
-        setTitle('');
-        setDescription('');
-        handleClose();
+        if (isEdit) {
+            const updatedBoardDetails = {
+                ...boardDetails,
+                title,
+                description,
+                id:boardData.id
+            };
+            // Update state
+            setBoardDetails(updatedBoardDetails);
+
+            setTitle('');
+            setDescription('');
+
+            handleUpdateBoard(updatedBoardDetails)
+        }
+        else {
+            const updatedBoardDetails = {
+                ...boardDetails,
+                title,
+                description,
+            };
+            // Update state
+            setBoardDetails(updatedBoardDetails);
+
+            setTitle('');
+            setDescription('');
+            handleCreateBoard(updatedBoardDetails)
+        }
+
+    };
+
+    const handleCreateBoard = async (updatedBoardDetails) => {
+        try {
+
+            const result = await addTaskBoardAPI(updatedBoardDetails);
+            if (result.status >= 200 && result.status < 300) {
+                setResBoard(result)
+            }
+
+        } catch (error) {
+            console.error('Error creating board:', error);
+        } finally {
+            handleClose();
+        }
+    };
+
+    const handleUpdateBoard = async (updatedBoardDetails) => {
+        try {
+            console.log('Updating board');
+            const result = await editBoardAPI(updatedBoardDetails);
+            console.log(result);
+            if (result.status >= 200 && result.status < 300) {
+                setResBoard(result)
+            }
+        } catch (error) {
+            console.error('Error updating board:', error);
+        } finally {
+            handleClose();
+        }
     };
 
     const boxClose = () => {
@@ -31,10 +100,10 @@ const AddNewBoard = ({ open, handleClose, handleCreate,isEdit }) => {
                 maxWidth="sm"
                 fullWidth
                 sx={{
-                    px:2,
+                    px: 2,
                 }}
             >
-                <DialogTitle>Create New Board</DialogTitle>
+                <DialogTitle>{isEdit ? 'Edit Board' : 'Create New Board'}</DialogTitle>
                 <DialogContent>
                     <Box
                         component="form"
@@ -77,15 +146,15 @@ const AddNewBoard = ({ open, handleClose, handleCreate,isEdit }) => {
                     >
                         OK
                     </Button>
-                    :
-                    <Button
-                        onClick={handleSubmit}
-                        color="primary"
-                        variant="contained"
-                        disabled={!title.trim()} // Disable button if title is empty
-                    >
-                        Create
-                    </Button>}
+                        :
+                        <Button
+                            onClick={handleSubmit}
+                            color="primary"
+                            variant="contained"
+                            disabled={!title.trim()} // Disable button if title is empty
+                        >
+                            Create
+                        </Button>}
                 </DialogActions>
             </Dialog>
 

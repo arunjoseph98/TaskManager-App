@@ -1,23 +1,22 @@
 import React, { useState } from 'react'
-import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CardHeader, IconButton } from '@mui/material';
 
 import { PiDotsThreeOutlineVertical } from "react-icons/pi";
 
 import { cardStyle } from './cardStyle';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import BasicMenu from '../common/BasicMenu/BasicMenu';
 import DeleteConfirmation from '../modal/DeleteConfirmation';
 import AddNewBoard from '../modal/AddNewBoard';
 
+import {deleteBoardAPI} from '../../services/allAPI'
 
-const BoardCard = () => {
+
+const BoardCard = ({boardData,setResBoard}) => {
   let navigate = useNavigate();
 
   //menu
@@ -37,15 +36,33 @@ const BoardCard = () => {
   const handleOpenDeleteModal = (event) => {
     event.stopPropagation();
     setIsDeleteModalOpen(true);
+
     handleClose()
   }
 
   const handleCloseDeleteModal = () => setIsDeleteModalOpen(false);
 
-  const handleDelete = (boardData) => {
-    console.log('Board Created:', boardData);
-    // You can add logic to save the board data
+  const handleDelete = () => {
+    console.log('deleteBoard:');
+    deleteBoard(boardData.id)
+    handleCloseDeleteModal()
   };
+
+  const deleteBoard = async (id) => {
+    try{
+     const result = await deleteBoardAPI(id)
+     setResBoard(result)
+    }
+    catch(err)
+    {
+      console.log(err);
+      
+    }
+  } 
+
+
+
+
 
   //AddModal - board
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -57,11 +74,6 @@ const BoardCard = () => {
   }
   const handleCloseAddModal = () => setIsAddModalOpen(false);
 
-  const handleCreateBoard = (boardData) => {
-    console.log('Board Created:', boardData);
-    // You can add logic to save the board data
-  };
-
   return (
     <>
       <Card sx={cardStyle.card} onClick={() => { navigate("/:id/AllTasks"); }}>
@@ -69,7 +81,7 @@ const BoardCard = () => {
         <CardHeader
           title={
             <Typography gutterBottom variant="h6" component="div">
-              Board Title
+              {boardData?.title} 
             </Typography>
           }
           action={
@@ -77,14 +89,11 @@ const BoardCard = () => {
               <PiDotsThreeOutlineVertical />
             </IconButton>
           }
-
         />
 
         <CardContent>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            This impressive paella is a perfect party dish and a fun meal to cook
-            together with your guests. Add 1 cup of frozen peas along with the mussels,
-            if you like.
+            {boardData?.description}
           </Typography>
         </CardContent>
         <BasicMenu anchorEl={anchorEl}
@@ -96,11 +105,12 @@ const BoardCard = () => {
       </Card>
       <DeleteConfirmation open={isDeleteModalOpen}
         handleClose={handleCloseDeleteModal}
-        handleCreate={handleDelete} />
+        handleDelete={handleDelete} />
 
       <AddNewBoard open={isAddModalOpen}
         handleClose={handleCloseAddModal}
-        handleCreate={handleCreateBoard}
+        boardData={boardData}
+        setResBoard={setResBoard}
         isEdit={true} 
         />
     </>
