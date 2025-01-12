@@ -9,7 +9,7 @@ const CompletedTasks = () => {
     <>
       <Box sx={{ display: 'flex' }} >
       <Navbar navOpt={'taskboard'}/>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 ,backgroundColor: '#DADADA',minHeight:"100vh"}}>
         <Toolbar />
         <ViewTask resTask={resTask} setResTask={setResTask} status={true}/>
         

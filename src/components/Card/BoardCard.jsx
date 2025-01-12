@@ -85,21 +85,37 @@ const BoardCard = ({ boardData, setResBoard }) => {
     <>
       <Card sx={cardStyle.card} onClick={() => { navigate(`/${boardData.id}/AllTasks`); }}>
 
-        <CardHeader
-          title={
-            <Typography gutterBottom variant="h6" component="div">
-              {boardData?.title}
-            </Typography>
-          }
-          action={
-            <IconButton onClick={handleClick} aria-label="settings">
-              <PiDotsThreeOutlineVertical />
-            </IconButton>
-          }
-        />
+       <CardHeader
+  
+  title={
+    <Typography
+      gutterBottom
+      variant="h6"
+      component="div"
+    >
+      {boardData?.title}
+    </Typography>
+  }
+  action={
+    <IconButton onClick={handleClick} aria-label="settings">
+      <PiDotsThreeOutlineVertical />
+    </IconButton>
+  }
+/>
 
-        <CardContent>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+        <CardContent 
+        sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      overflowX: 'auto', // Enable horizontal scrolling for the entire content
+    }}>
+          <Typography variant="body2" 
+          sx={{
+            color: 'text.secondary',
+            whiteSpace: 'normal', // Allow text wrapping
+            overflowX: 'auto', // Enable horizontal scrolling
+            wordWrap: 'break-word', // Ensure that words break properly if too long
+          }}>
             {boardData?.description}
           </Typography>
         </CardContent>

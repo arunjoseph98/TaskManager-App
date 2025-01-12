@@ -17,7 +17,7 @@ export const cardStyle = {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#f5f5f5',
-      border: '2px solid rgb(141, 20, 44)',
+      border: '2px solid #d50000',
       cursor: 'pointer',
       transition: 'transform 0.2s ease-in-out',
       '&:hover': {

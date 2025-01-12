@@ -9,7 +9,7 @@ const TaskBoards = () => {
     <>
       <Box sx={{ display: 'flex' }} >
       <Navbar setResBoard={setResBoard} navOpt={'board'}/>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 ,backgroundColor: '#DADADA',minHeight:"100vh"}}>
         <Toolbar />
         <View setResBoard={setResBoard} resBoard={resBoard} />
         

@@ -128,7 +128,7 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
 
     return (
         <>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
                 <Typography gutterBottom variant="h4" component="div">
                     {board?.title}
                 </Typography>

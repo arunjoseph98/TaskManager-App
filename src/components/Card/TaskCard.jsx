@@ -115,8 +115,22 @@ const TaskCard = ({ taskData, setResTask, boardId }) => {
         />
 
         {/* Card Content */}
-        <CardContent>
-          <Typography variant="body2" color="text.secondary">
+        <CardContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflowX: 'auto', // Enable horizontal scrolling for the entire content
+        }}
+        >
+          <Typography 
+          variant="body2" 
+          sx={{
+            color: 'text.secondary',
+            whiteSpace: 'normal', // Allow text wrapping
+            overflowX: 'auto', // Enable horizontal scrolling
+            wordWrap: 'break-word', // Ensure that words break properly if too long
+          }}          
+          >
             {taskData?.description}
           </Typography>
         </CardContent>
