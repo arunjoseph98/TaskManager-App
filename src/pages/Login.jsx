@@ -1,9 +1,9 @@
 import React from 'react';
-import { Box, Typography, Button, Grid, Container, Card, CardContent } from '@mui/material';
+import { Box, Typography, Button, Container, Card, CardContent, AppBar, Toolbar, IconButton } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import { useNavigate } from 'react-router-dom';
-// import TaskIcon from '@mui/icons-material/Task';
-
-import logo from '../assets/taskboard logo.png'
+import logo from '../assets/taskboard logo.png';
+import backgroundImg from '../assets/hero.png';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,18 +14,28 @@ const Login = () => {
         minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: '#f5f5f5',
+        backgroundImage: `url(${backgroundImg})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed',
         padding: 3,
       }}
     >
+      {/* Header Section with Transparent Background */}
+      <AppBar position="static" sx={{ bgcolor: 'transparent', boxShadow: 'none' }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'start' }}>
+          <IconButton edge="start" color="inherit" onClick={() => navigate('/')}>
+            <img src={logo} alt="Task Board Logo" style={{ height: 40 }} />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
       {/* Hero Section */}
-      <Container maxWidth="lg" sx={{ textAlign: 'center', marginBottom: 5 }}>
-        <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-          Welcome to Task Board
+      <Container maxWidth="lg" sx={{ textAlign: 'start', marginBottom: 15, marginTop: 5 }}>
+        <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: 2, color: 'black' }}>
+          Welcome to TaskBoard
         </Typography>
-        <Typography variant="h6" sx={{ color: 'text.secondary', marginBottom: 3 }}>
+        <Typography variant="h6" sx={{ color: 'black', marginBottom: 3 }}>
           Simplify your workflow, organize tasks, and boost productivity with Task Board.
         </Typography>
         <Button
@@ -39,15 +49,15 @@ const Login = () => {
         </Button>
       </Container>
 
-      {/* Features Section */}
-      <Container maxWidth="lg">
-        <Grid container spacing={4}>
+      {/* Features Section - Centered */}
+      <Container maxWidth="lg" sx={{ textAlign: 'center', marginBottom: 5 }}>
+        <Grid container spacing={4} justifyContent="center" alignItems="center">
           {[
-            { title: 'Create Tasks', description: 'Add and organize your tasks effortlessly.' },
-            { title: 'Track Progress', description: 'Monitor your work in real-time.' },
-            { title: 'Collaborate', description: 'Work with your team efficiently.' },
+            { title: 'Create Boards', description: 'Create boards to organize and track tasks in one place.' },
+            { title: 'Create Tasks', description: 'Add tasks with descriptions and deadlines to stay on track.' },
+            { title: 'Prioritize Tasks', description: 'Prioritize tasks to boost productivity.' },
           ].map((feature, index) => (
-            <Grid item xs={12} sm={4} key={index}>
+            <Grid  xs={12} sm={4} key={index}>
               <Card
                 sx={{
                   boxShadow: 3,
@@ -56,7 +66,6 @@ const Login = () => {
                 }}
               >
                 <CardContent sx={{ textAlign: 'center' }}>
-                  {/* <TaskIcon sx={{ fontSize: 40, color: 'primary.main', marginBottom: 2 }} /> */}
                   <Typography variant="h6" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
                     {feature.title}
                   </Typography>
@@ -74,4 +83,3 @@ const Login = () => {
 };
 
 export default Login;
-
