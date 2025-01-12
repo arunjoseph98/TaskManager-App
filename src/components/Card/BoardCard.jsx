@@ -13,11 +13,13 @@ import BasicMenu from '../common/BasicMenu/BasicMenu';
 import DeleteConfirmation from '../modal/DeleteConfirmation';
 import AddNewBoard from '../modal/AddNewBoard';
 
-import {deleteBoardAPI} from '../../services/allAPI'
+import { deleteBoardAPI, deleteTaskAPI, getTaskFordeleteBoardAPI } from '../../services/allAPI'
 
 
-const BoardCard = ({boardData,setResBoard}) => {
+const BoardCard = ({ boardData, setResBoard }) => {
   let navigate = useNavigate();
+
+
 
   //menu
   const [anchorEl, setAnchorEl] = useState(null);
@@ -49,16 +51,21 @@ const BoardCard = ({boardData,setResBoard}) => {
   };
 
   const deleteBoard = async (id) => {
-    try{
-     const result = await deleteBoardAPI(id)
-     setResBoard(result)
-    }
-    catch(err)
-    {
-      console.log(err);
+    try {
+      const taskresult = await getTaskFordeleteBoardAPI(id)
+      if (taskresult.status >= 200 && taskresult.status < 300) {
+        const tasks = taskresult.data;
+        tasks.map(async (tasks)=> await deleteTaskAPI(tasks.id))
+        const result = await deleteBoardAPI(id)
+      setResBoard(result)
+      }
       
     }
-  } 
+    catch (err) {
+      console.log(err);
+
+    }
+  }
 
 
 
@@ -67,7 +74,7 @@ const BoardCard = ({boardData,setResBoard}) => {
   //AddModal - board
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-  const handleOpenAddModal= (event) => {
+  const handleOpenAddModal = (event) => {
     event.stopPropagation();
     setIsAddModalOpen(true);
     handleClose()
@@ -81,7 +88,7 @@ const BoardCard = ({boardData,setResBoard}) => {
         <CardHeader
           title={
             <Typography gutterBottom variant="h6" component="div">
-              {boardData?.title} 
+              {boardData?.title}
             </Typography>
           }
           action={
@@ -99,8 +106,8 @@ const BoardCard = ({boardData,setResBoard}) => {
         <BasicMenu anchorEl={anchorEl}
           open={openMenu}
           handleClose={handleClose}
-          handleOpenDeleteModal={handleOpenDeleteModal} 
-          handleOpenAddModal={handleOpenAddModal}/>
+          handleOpenDeleteModal={handleOpenDeleteModal}
+          handleOpenAddModal={handleOpenAddModal} />
 
       </Card>
       <DeleteConfirmation open={isDeleteModalOpen}
@@ -111,8 +118,8 @@ const BoardCard = ({boardData,setResBoard}) => {
         handleClose={handleCloseAddModal}
         boardData={boardData}
         setResBoard={setResBoard}
-        isEdit={true} 
-        />
+        isEdit={true}
+      />
     </>
   )
 }

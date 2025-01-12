@@ -6,16 +6,27 @@ import AddNewTask from '../modal/AddNewTask';
 import { Box, Button, ButtonGroup, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 
-import { getAllTaskAPI, getTaskBoardTitleAPI } from '../../services/allAPI';
+import { getAllTaskAPI, getOverdueTasksAPI, getTaskBoardTitleAPI, updateOverdueAPI } from '../../services/allAPI';
 
-const ViewTask = ({ resTask, setResTask }) => {
+const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
     const param = useParams()
     const [allTask, setAllTask] = useState([])
-    const [board,setBoard]=useState({})
+    const [board, setBoard] = useState({})
+    const [filter, setFilter] = useState("All"); // Default filter is 'All'
 
     useEffect(() => {
-        getAllTask(param.id)
+
+        if (isOverduePage) {
+            getOverdueTasks(param.id)
+        } else {
+            getAllTask(param.id, status)
+        }
+
     }, [resTask])
+
+    useEffect(() => {
+        updateOverdue()
+    }, [])
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -24,15 +35,16 @@ const ViewTask = ({ resTask, setResTask }) => {
     const handleCloseModal = () => setIsModalOpen(false);
 
 
-    const getAllTask = async (id) => {
+    const getAllTask = async (id, status) => {
         try {
-            const result = await getAllTaskAPI(id);
+            const result = await getAllTaskAPI(id, status);
             const boardResult = await getTaskBoardTitleAPI(id)
 
             if (result.status >= 200 && result.status < 300) {
                 setAllTask(result.data);
                 setBoard(boardResult.data)
                 // console.log(boardResult.data);
+
             }
             else {
                 console.log("API call failed");
@@ -41,6 +53,78 @@ const ViewTask = ({ resTask, setResTask }) => {
             console.error('Error creating board:', error);
         }
     };
+    ///////////////////////////////////////////////////////////////////updateOverdue
+    const updateOverdue = async () => {
+        try {
+            const today = new Date();
+            const updatedTasks = []; // Store results for all updated tasks
+
+            for (const task of allTask) {
+                if (
+                    task.dueDate &&
+                    task.dueDate.year &&
+                    task.dueDate.month &&
+                    task.dueDate.day
+                ) {
+                    const taskDueDate = new Date(
+                        task.dueDate.year,
+                        task.dueDate.month - 1,
+                        task.dueDate.day
+                    );
+
+                    if (taskDueDate < today && !task.isComplete) {
+                        const updatedData = {
+                            isOverdue: true, // Assuming `status` should be `true` for overdue tasks
+                        };
+
+                        try {
+                            const result = await updateOverdueAPI(task.id, updatedData);
+                            updatedTasks.push(result);
+                        } catch (err) {
+                            console.error(`Failed to update task with id: ${task.id}`, err);
+                        }
+                    }
+                }
+            }
+
+            setResTask(updatedTasks); // Update state with all results
+            console.log("Overdue tasks updated:", updatedTasks);
+        } catch (err) {
+            console.error("Error updating overdue tasks:", err);
+        }
+    };
+
+
+    ////////////////////getOverdueTasks
+    const getOverdueTasks = async (id) => {
+        try {
+            const result = await getOverdueTasksAPI(id);
+            const boardResult = await getTaskBoardTitleAPI(id)
+
+            if (result.status >= 200 && result.status < 300) {
+                setAllTask(result.data);
+                setBoard(boardResult.data)
+                // console.log(boardResult.data);
+
+            }
+            else {
+                console.log("API call failed");
+            }
+        } catch (error) {
+            console.error('Error creating board:', error);
+        }
+    };
+    //////////////////////////////////////////Filter
+
+    
+
+    // Filtered tasks based on selected filter
+    const filteredTasks = allTask?.filter((task) =>
+        filter === "All" || task.priority === filter
+    );
+
+    
+    
 
     return (
         <>
@@ -49,11 +133,32 @@ const ViewTask = ({ resTask, setResTask }) => {
                     {board?.title}
                 </Typography>
                 <Box >
-                    <Button variant="text">All</Button>
-                    <ButtonGroup sx={{ bgcolor: '#E2E0F5', px: 1 }} size="small" variant="text" aria-label="Basic button group">
-                        <Button color='success'>Low</Button>
-                        <Button color='warning'>Medium</Button>
-                        <Button color='error'>High</Button>
+                    <Button
+                        color={filter === "All" ? "primary" : "default"}
+                        onClick={() => setFilter("All")}
+                        variant="text">
+                        All
+                    </Button>
+
+                    <ButtonGroup  size="small" variant="outlined" aria-label="Basic button group">
+                        <Button
+                            color={filter === "High" ? "error" : "default"}
+                            onClick={() => setFilter("High")}
+                        >
+                            High
+                        </Button>
+                        <Button
+                            color={filter === "Medium" ? "warning" : "default"}
+                            onClick={() => setFilter("Medium")}
+                        >
+                            Medium
+                        </Button>
+                        <Button
+                            color={filter === "Low" ? "success" : "default"}
+                            onClick={() => setFilter("Low")}
+                        >
+                            Low
+                        </Button>
                     </ButtonGroup>
                 </Box>
             </Box>
@@ -65,10 +170,10 @@ const ViewTask = ({ resTask, setResTask }) => {
             >
 
                 {
-                    allTask?.length > 0 &&
-                    allTask?.map(tasks => (
+                    filteredTasks?.length > 0 &&
+                    filteredTasks?.map(tasks => (
                         <Grid key={tasks.id} xs={12} sm={6} md={4}>
-                            <TaskCard boardId={param.id} taskData={tasks} setResTask={setResTask}/>
+                            <TaskCard boardId={param.id} taskData={tasks} setResTask={setResTask} />
                         </Grid>
                     ))
 

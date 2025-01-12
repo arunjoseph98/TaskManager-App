@@ -11,6 +11,19 @@ export const cardStyle = {
           transform: 'scale(1.05)',
         },
     },
+    dueCard: {
+      width: 300,
+      height:250,
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: '#f5f5f5',
+      border: '2px solid rgb(141, 20, 44)',
+      cursor: 'pointer',
+      transition: 'transform 0.2s ease-in-out',
+      '&:hover': {
+        transform: 'scale(1.05)',
+      },
+  },
     addCard:{
         width: 300,
         height:250,

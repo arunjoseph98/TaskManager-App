@@ -11,25 +11,27 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField 
 import { addTaskAPI, editTaskAPI } from '../../services/allAPI'
 import dayjs from 'dayjs';
 
-const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit}) => {
+const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
-    const [isComplete,setIsComplete]=useState(false);
+    const [isComplete, setIsComplete] = useState(false);
     const [priority, setPriority] = useState('Medium');
     const [dueDate, setDueDate] = useState(null);
     const [date, setDate] = useState(null);
+    const [isOverdue, setIsOverdue] = useState(false);
 
     const [taskDetails, setTaskDetails] = useState({
         title: "",
         boardId: '',
         description: "",
-        isComplete:false,
+        isComplete: false,
         priority: "",
         dueDate: null,
         date: null,
+        isOverdue:false,
     })
-    // console.log('isEdit :',isEdit);
     
+
     useEffect(() => {
         if (isEdit) {
             setTitle(taskData.title)
@@ -38,8 +40,8 @@ const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit})
             setPriority(taskData.priority);
             setDueDate(taskData.dueDate);
             setDate(dayjs(taskData.date));
+            setIsOverdue(taskData.isOverdue)
             // console.log(isComplete);
-            
         }
     }, [taskData])
 
@@ -51,16 +53,28 @@ const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit})
                 month: newValue.month() + 1,
                 year: newValue.year(),
             };
+
             setDate(newValue)
             setDueDate(date);
-            
+            const today = new Date();
+            const taskDueDate = new Date(
+                date.year,
+                date.month - 1,
+                date.day)
+                        
+             if (taskDueDate < today ){
+                setIsOverdue(true)
+            }else{
+                setIsOverdue(false)
+            }
+
         }
 
     };
 
     const handleSubmit = () => {
-        
-        
+
+
         const updatedTaskDetails = {
             ...taskDetails,
             id: isEdit ? taskData.id : undefined,
@@ -71,8 +85,9 @@ const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit})
             priority,
             dueDate,
             date,
+            isOverdue
         };
-        
+
         // Update state
         setTaskDetails(updatedTaskDetails);
 
@@ -90,10 +105,12 @@ const AddNewTask = ({ open, handleClose, setResTask, boardId, taskData, isEdit})
     };
 
     const boxClose = () => {
-        setTitle('');
-        setDescription('');
-        setPriority('Medium');
-        setDueDate(null);
+        if (!isEdit) {
+            setTitle('');
+            setDescription('');
+            setPriority('Medium');
+            setDueDate(null);
+        }
         handleClose();
     };
 

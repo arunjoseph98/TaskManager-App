@@ -8,7 +8,7 @@ export const boardNavbarItems =[
         id:0,
         icon: RiAddBoxFill,
         label:'New Board',
-        route: 'route',
+        route: null,
         functionName:'createBord'
     },
    
@@ -27,21 +27,21 @@ export const taskboardNavbarItems =[
         id:1,
         icon: FaTasks,
         label:'All Tasks',
-        route: '/:id/AllTasks',
+        route: '/AllTasks',
         functionName:'goTo'
     },
     {
         id:2,
         icon: FaCheckSquare,
         label:'Completed Tasks',
-        route: '/:id/CompletedTasks',
+        route: '/CompletedTasks',
         functionName:'goTo'
     },
     {
         id:3,
         icon: MdTimerOff,
         label:'Overdue Tasks',
-        route: '/:id/OverdueTasks',
+        route: '/OverdueTasks',
         functionName:'goTo'
     },
     

@@ -78,8 +78,9 @@ const AddNewBoard = ({ open, handleClose, setResBoard, boardData, isEdit }) => {
     };
 
     const boxClose = () => {
-        setTitle('');
-        setDescription('');
+        if(!isEdit)
+        {setTitle('');
+        setDescription('');}
         handleClose();
     };
 

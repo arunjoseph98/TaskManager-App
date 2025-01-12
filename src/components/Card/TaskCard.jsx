@@ -73,9 +73,9 @@ const TaskCard = ({ taskData, setResTask, boardId }) => {
   const handleCheckboxChange = (event) => {
     setChecked(event.target.checked);  // Update the state based on the checkbox status
     if (event.target.checked) {
-      updateStatus(taskData.id,true);
+      updateStatus(taskData.id, true);
     } else {
-      updateStatus(taskData.id,false);
+      updateStatus(taskData.id, false);
     }
   };
 
@@ -85,7 +85,7 @@ const TaskCard = ({ taskData, setResTask, boardId }) => {
         isComplete: status,
       };
       const result = await updateStatusAPI(id, updatedData)
-      //  setResTask(result)
+      setResTask(result)
       console.log(result);
 
     }
@@ -99,7 +99,7 @@ const TaskCard = ({ taskData, setResTask, boardId }) => {
 
   return (
     <>
-      <Card sx={cardStyle.card}>
+      <Card sx={taskData?.isOverdue ? cardStyle.dueCard : cardStyle.card}>
         {/* Card Header */}
         <CardHeader
           title={
@@ -132,8 +132,17 @@ const TaskCard = ({ taskData, setResTask, boardId }) => {
           <Typography variant="caption" color="text.secondary">
             Due <br />{taskData?.dueDate?.day}-{taskData?.dueDate?.month}-{taskData?.dueDate?.year}
           </Typography>
-
-          <Chip label={taskData?.priority} color="warning" size="small" />
+          {taskData?.isOverdue && <Chip label="Due" color="error" size="small" />}
+          <Chip
+            label={taskData?.priority}
+            color={
+              taskData?.priority === "High"
+                ? "error"
+                : taskData?.priority === "Medium"
+                  ? "warning"
+                  : "success"
+            }
+            size="small" />
 
           <Checkbox
             checked={checked}

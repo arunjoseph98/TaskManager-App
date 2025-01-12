@@ -13,47 +13,52 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 
-import { taskboardNavbarItems,boardNavbarItems } from './consts/navbarItems';
+import { taskboardNavbarItems, boardNavbarItems } from './consts/navbarItems';
 import { navBarStyles } from './navStyles';
 import logo from '../../assets/taskboard logo.png'
 import { Button, IconButton } from '@mui/material';
 import { FiLogOut } from "react-icons/fi";
 import AddNewBoard from '../modal/AddNewBoard';
-import { Router, useLocation, useNavigate } from 'react-router-dom';
+import { Router, useLocation, useNavigate, useParams } from 'react-router-dom';
 
 
-const Navbar = ({navOpt,setResBoard}) => {
+const Navbar = ({ navOpt, setResBoard}) => {
   const location = useLocation(); // Hook to get current location
-
+  const param = useParams()
+  const [loc, setLoc] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-    const handleOpenModal = () => setIsModalOpen(true);
-    const handleCloseModal = () => setIsModalOpen(false);
-  
-   
-    const getItemsForNav = (navOpt) => {
-      switch (navOpt) {
-        case 'board':
-          return boardNavbarItems;
-        case 'taskboard':
-          return taskboardNavbarItems;
-        default:
-          return [];
-      }
-    };
 
-    let navigate = useNavigate();
-
-    const handleClick=(fn,route)=>{
-      switch (fn) {
-        case 'createBord':
-          return handleOpenModal();
-        case 'goTo':
-          return navigate(route);
-        default:
-          return [];
-      }
+  const handleOpenModal = () => setIsModalOpen(true);
+  const handleCloseModal = () => setIsModalOpen(false);
+  
+  const getItemsForNav = (navOpt) => {
+    switch (navOpt) {
+      case 'board':
+        return boardNavbarItems;
+      case 'taskboard':
+        return taskboardNavbarItems;
+      default:
+        return [];
     }
+  };
+
+  let navigate = useNavigate();
+
+  const handleClick = (fn, route) => {
+    switch (fn) {
+      case 'createBord':
+        return handleOpenModal();
+      case 'goTo': {
+        
+        
+        const path = route === '/taskboards' ? route : (`${param.id ? `/${param.id}` : ''}${route}`);
+        navigate(path);
+      }
+
+      default:
+        return [];
+    }
+  }
 
 
   return (
@@ -62,9 +67,9 @@ const Navbar = ({navOpt,setResBoard}) => {
       <AppBar position="fixed" sx={navBarStyles.appbar}>
         <Toolbar>
           <Box sx={navBarStyles.wrapper}>
-          <img src={logo} style={navBarStyles.logo} alt="" />
+            <img src={logo} style={navBarStyles.logo} alt="" />
             <Box sx={navBarStyles.topRow}>
-              <IconButton onClick={()=>navigate('/')} color="white">
+              <IconButton onClick={() => navigate('/')} color="white">
                 <FiLogOut />
               </IconButton>
             </Box>
@@ -80,24 +85,24 @@ const Navbar = ({navOpt,setResBoard}) => {
         <Divider />
         <Toolbar />
         <List>
-  {getItemsForNav(navOpt).map((item) => (
-    <ListItem key={item.id} disablePadding>
-      <ListItemButton onClick={() => handleClick(item.functionName,item.route)} selected={location.pathname==item.route?true:false}>
-        <ListItemIcon sx={navBarStyles.icons}>
-          <item.icon size={28} />
-        </ListItemIcon>
-        <ListItemText primary={item.label} />
-      </ListItemButton>
-    </ListItem>
-  ))}
-</List>
+          {getItemsForNav(navOpt).map((item) => (
+            <ListItem key={item.id} disablePadding>
+              <ListItemButton onClick={() => handleClick(item.functionName, item.route)} selected={location.pathname === `${param.id ? `/${param.id}` : ''}${item.route}`}>
+                <ListItemIcon sx={navBarStyles.icons}>
+                  <item.icon size={28} />
+                </ListItemIcon>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
       </Drawer>
 
       {
         <AddNewBoard open={isModalOpen}
-        handleClose={handleCloseModal}
-        setResBoard={setResBoard} />
-        }
+          handleClose={handleCloseModal}
+          setResBoard={setResBoard} />
+      }
     </>
   )
 }
