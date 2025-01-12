@@ -1,3 +1,3 @@
-const SERVERURL="http://localhost:3000"
+const SERVERURL="https://taskmanager-server-3jr6.onrender.com"
 
 export default SERVERURL
