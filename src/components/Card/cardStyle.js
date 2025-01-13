@@ -5,6 +5,7 @@ export const cardStyle = {
         display: 'flex',
         flexDirection: 'column',
         backgroundColor: '#f5f5f5',
+        borderRadius:'10px',
         cursor: 'pointer',
         transition: 'transform 0.2s ease-in-out',
         '&:hover': {
@@ -17,6 +18,7 @@ export const cardStyle = {
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: '#f5f5f5',
+      borderRadius:'10px',
       border: '2px solid #d50000',
       cursor: 'pointer',
       transition: 'transform 0.2s ease-in-out',
@@ -33,6 +35,7 @@ export const cardStyle = {
         backgroundColor: '#f5f5f5',
         cursor: 'pointer',
         border: '2px dashed #ccc',
+        borderRadius:'10px',
         transition: 'transform 0.2s ease-in-out',
         '&:hover': {
           transform: 'scale(1.05)',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -12,25 +12,30 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
+import { useMediaQuery, Button } from '@mui/material';
 
+import { FiMenu, FiLogOut } from "react-icons/fi";
 import { taskboardNavbarItems, boardNavbarItems } from './consts/navbarItems';
 import { navBarStyles } from './navStyles';
-import logo from '../../assets/taskboard logo.png'
-import { Button, IconButton } from '@mui/material';
-import { FiLogOut } from "react-icons/fi";
+import logo from '../../assets/taskboard logo.png';
 import AddNewBoard from '../modal/AddNewBoard';
-import { Router, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-
-const Navbar = ({ navOpt, setResBoard}) => {
-  const location = useLocation(); // Hook to get current location
-  const param = useParams()
-  const [loc, setLoc] = useState('');
+const Navbar = ({ navOpt, setResBoard }) => {
+  const location = useLocation();
+  const param = useParams();
+  const navigate = useNavigate();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Media query to detect small screens
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
-  
+  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+
   const getItemsForNav = (navOpt) => {
     switch (navOpt) {
       case 'board':
@@ -42,24 +47,38 @@ const Navbar = ({ navOpt, setResBoard}) => {
     }
   };
 
-  let navigate = useNavigate();
-
   const handleClick = (fn, route) => {
     switch (fn) {
       case 'createBord':
         return handleOpenModal();
-      case 'goTo': {
-        
-        
-        const path = route === '/taskboards' ? route : (`${param.id ? `/${param.id}` : ''}${route}`);
+      case 'goTo':
+        const path = route === '/taskboards'
+          ? route
+          : (`${param.id ? `/${param.id}` : ''}${route}`);
         navigate(path);
-      }
-
+        break;
       default:
-        return [];
+        break;
     }
-  }
+  };
 
+  const drawerContent = (
+    <List>
+      {getItemsForNav(navOpt).map((item) => (
+        <ListItem key={item.id} disablePadding>
+          <ListItemButton
+            onClick={() => handleClick(item.functionName, item.route)}
+            selected={location.pathname === `${param.id ? `/${param.id}` : ''}${item.route}`}
+          >
+            <ListItemIcon sx={navBarStyles.icons}>
+              <item.icon size={28} />
+            </ListItemIcon>
+            <ListItemText primary={item.label} />
+          </ListItemButton>
+        </ListItem>
+      ))}
+    </List>
+  );
 
   return (
     <>
@@ -67,44 +86,46 @@ const Navbar = ({ navOpt, setResBoard}) => {
       <AppBar position="fixed" sx={navBarStyles.appbar}>
         <Toolbar>
           <Box sx={navBarStyles.wrapper}>
-            <img src={logo} style={navBarStyles.logo} alt="" />
+            {isMobile && (
+             <Box sx={navBarStyles.smallBox}>
+                <IconButton sx={navBarStyles.menuIcons} edge="start" onClick={toggleDrawer}>
+                  <FiMenu />
+                </IconButton>
+                <img src={logo} style={navBarStyles.logoSmall} alt="Taskboard Logo" />
+             </Box>
+            )}
+            {!isMobile && <img src={logo} style={navBarStyles.logo} alt="Taskboard Logo" />}
             <Box sx={navBarStyles.topRow}>
-              <IconButton onClick={() => navigate('/')} color="white">
+              <IconButton onClick={() => navigate('/')} sx={{color:'#fcfcf'}} aria-label="Logout">
                 <FiLogOut />
               </IconButton>
             </Box>
           </Box>
         </Toolbar>
       </AppBar>
+
+      {/* Drawer: Temporary for Mobile, Permanent for Desktop */}
       <Drawer
         sx={navBarStyles.drawer}
-        variant="permanent"
+        variant={isMobile ? 'temporary' : 'permanent'}
         anchor="left"
+        open={isMobile ? isDrawerOpen : true}
+        onClose={toggleDrawer}
       >
         <Toolbar />
         <Divider />
         <Toolbar />
-        <List>
-          {getItemsForNav(navOpt).map((item) => (
-            <ListItem key={item.id} disablePadding>
-              <ListItemButton onClick={() => handleClick(item.functionName, item.route)} selected={location.pathname === `${param.id ? `/${param.id}` : ''}${item.route}`}>
-                <ListItemIcon sx={navBarStyles.icons}>
-                  <item.icon size={28} />
-                </ListItemIcon>
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
+        {drawerContent}
       </Drawer>
 
-      {
-        <AddNewBoard open={isModalOpen}
-          handleClose={handleCloseModal}
-          setResBoard={setResBoard} />
-      }
+      {/* Modal for Adding New Board */}
+      <AddNewBoard
+        open={isModalOpen}
+        handleClose={handleCloseModal}
+        setResBoard={setResBoard}
+      />
     </>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

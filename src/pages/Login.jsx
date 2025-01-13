@@ -32,10 +32,10 @@ const Login = () => {
 
       {/* Hero Section */}
       <Container maxWidth="lg" sx={{ textAlign: 'start', marginBottom: 15, marginTop: 5 }}>
-        <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: 2, color: 'black' }}>
+        <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: 2, color: '#1C1C1C' }}>
           Welcome to TaskBoard
         </Typography>
-        <Typography variant="h6" sx={{ color: 'black', marginBottom: 3 }}>
+        <Typography variant="h6" sx={{ color: '#1C1C1C', marginBottom: 3 }}>
           Simplify your workflow, organize tasks, and boost productivity with Task Board.
         </Typography>
         <Button
