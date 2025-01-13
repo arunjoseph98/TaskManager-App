@@ -3,8 +3,9 @@ import Grid from '@mui/material/Grid2';
 import AddCard from '../Card/AddCard';
 import TaskCard from '../Card/TaskCard';
 import AddNewTask from '../modal/AddNewTask';
-import { Box, Button, ButtonGroup, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, CircularProgress, Typography, useMediaQuery } from '@mui/material';
 import { useParams } from 'react-router-dom';
+
 
 import { getAllTaskAPI, getOverdueTasksAPI, getTaskBoardTitleAPI, updateOverdueAPI } from '../../services/allAPI';
 
@@ -13,6 +14,7 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
     const [allTask, setAllTask] = useState([])
     const [board, setBoard] = useState({})
     const [filter, setFilter] = useState("All"); // Default filter is 'All'
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
 
@@ -36,6 +38,7 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
 
 
     const getAllTask = async (id, status) => {
+        setLoading(true); // Start loading
         try {
             const result = await getAllTaskAPI(id, status);
             const boardResult = await getTaskBoardTitleAPI(id)
@@ -51,10 +54,13 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
             }
         } catch (error) {
             console.error('Error creating board:', error);
-        }
+        }finally {
+            setLoading(false); // Stop loading
+          }
     };
     ///////////////////////////////////////////////////////////////////updateOverdue
     const updateOverdue = async () => {
+        
         try {
             const today = new Date();
             const updatedTasks = []; // Store results for all updated tasks
@@ -97,6 +103,7 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
 
     ////////////////////getOverdueTasks
     const getOverdueTasks = async (id) => {
+        setLoading(true); // Start loading
         try {
             const result = await getOverdueTasksAPI(id);
             const boardResult = await getTaskBoardTitleAPI(id)
@@ -112,7 +119,9 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
             }
         } catch (error) {
             console.error('Error creating board:', error);
-        }
+        }finally {
+            setLoading(false); // Stop loading
+          }
     };
     //////////////////////////////////////////Filter
 
@@ -123,67 +132,84 @@ const ViewTask = ({ resTask, setResTask, status, isOverduePage = false }) => {
         filter === "All" || task.priority === filter
     );
 
-    
+     // Media query to detect small screens
+  const isMobile = useMediaQuery((theme) => theme.breakpoints.down('sm'));
     
 
     return (
         <>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', }}>
-                <Typography gutterBottom variant="h4" component="div">
-                    {board?.title}
-                </Typography>
-                <Box >
-                    <Button
-                        color={filter === "All" ? "primary" : "default"}
-                        onClick={() => setFilter("All")}
-                        variant="text">
-                        All
-                    </Button>
-
-                    <ButtonGroup  size="small" variant="outlined" aria-label="Basic button group">
-                        <Button
-                            color={filter === "High" ? "error" : "default"}
-                            onClick={() => setFilter("High")}
-                        >
-                            High
+            {loading ? ( // Show loader while loading is true
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                      }}
+                    >
+                      <CircularProgress size={80} style={{marginTop:-400}}/>
+                    </Box>
+                  ) :
+            (
+            <>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                    <Typography gutterBottom variant={isMobile ? 'h4' : 'h3'} component="div">
+                        {board?.title}
+                    </Typography>
+                    <Box >
+                        
+                        <ButtonGroup  size="small" variant="outlined" aria-label="Basic button group">
+                            <Button
+                            color={filter === "All" ? "primary" : "default"}
+                            onClick={() => setFilter("All")}
+                            >
+                            All
                         </Button>
-                        <Button
-                            color={filter === "Medium" ? "warning" : "default"}
-                            onClick={() => setFilter("Medium")}
-                        >
-                            Medium
-                        </Button>
-                        <Button
-                            color={filter === "Low" ? "success" : "default"}
-                            onClick={() => setFilter("Low")}
-                        >
-                            Low
-                        </Button>
-                    </ButtonGroup>
+                            <Button
+                                color={filter === "High" ? "error" : "default"}
+                                onClick={() => setFilter("High")}
+                            >
+                                High
+                            </Button>
+                            <Button
+                                color={filter === "Medium" ? "warning" : "default"}
+                                onClick={() => setFilter("Medium")}
+                            >
+                                Medium
+                            </Button>
+                            <Button
+                                color={filter === "Low" ? "success" : "default"}
+                                onClick={() => setFilter("Low")}
+                            >
+                                Low
+                            </Button>
+                        </ButtonGroup>
+                    </Box>
                 </Box>
-            </Box>
-            <Grid
-                container
-                spacing={2} // Adjust spacing between items
-                justifyContent="flex-start" // Align items horizontally
-                alignItems="flex-start"     // Align items vertically
-            >
-
-                {
-                    filteredTasks?.length > 0 &&
-                    filteredTasks?.map(tasks => (
-                        <Grid key={tasks.id} xs={12} sm={6} md={4}>
-                            <TaskCard boardId={param.id} taskData={tasks} setResTask={setResTask} />
-                        </Grid>
-                    ))
-
-                }
-
-
-                <Grid xs={12} sm={6} md={4}>
-                    <AddCard onClick={handleOpenModal} />
+                <Grid
+                    container
+                    spacing={2} // Adjust spacing between items
+                    justifyContent="flex-start" // Align items horizontally
+                    alignItems="flex-start"     // Align items vertically
+                >
+    
+                    {
+                        filteredTasks?.length > 0 &&
+                        filteredTasks?.map(tasks => (
+                            <Grid key={tasks.id} xs={12} sm={6} md={4}>
+                                <TaskCard boardId={param.id} taskData={tasks} setResTask={setResTask} />
+                            </Grid>
+                        ))
+    
+                    }
+    
+    
+                    <Grid xs={12} sm={6} md={4}>
+                        <AddCard onClick={handleOpenModal} />
+                    </Grid>
                 </Grid>
-            </Grid>
+            </>
+            )}
 
 
 
